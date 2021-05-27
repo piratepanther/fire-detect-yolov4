@@ -14,6 +14,7 @@ import uuid
 import time
 import random
 import urllib
+import urllib.request as ur
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys  # 键盘类
 
@@ -52,14 +53,15 @@ def download_baidu_images(save_path, img_num, browser):
     time.sleep(random.random())
 
     for i in range(img_num):
-        # img_link_ = browser.find_element_by_xpath('//div/img[@class="currentImg"]')
-        img_link_ = browser.find_element_by_xpath('//*[@id="currentImg"]')
+        img_link_ = browser.find_element_by_xpath('//div/img[@class="currentImg"]')
+        # print(img_link_)
+        # img_link_ = browser.find_element_by_xpath('//*[@id="currentImg"]')
         # //*[@id="currentImg"]
         src_link = img_link_.get_attribute('src')
         print(src_link)
         # 保存图片，使用urlib
         img_name = uuid.uuid4()
-        urllib.request.urlretrieve(src_link, os.path.join(save_path, str(img_name) + '.jpg'))
+        ur.urlretrieve(src_link, os.path.join(save_path, str(img_name) + '.jpg'))
         # 关闭图像界面，并切换到外观界面
         time.sleep(random.random())
 
@@ -90,7 +92,7 @@ def main(names, save_root, img_num=[1000,], continue_num=0, is_open_chrome=False
         prefs = {"profile.managed_default_content_settings.images": 2}
         options.add_experimental_option("prefs", prefs)
 
-    chrome_driver = r'J:\nvida\firedata\chromedriver.exe'  #chromedriver的文件位置
+    chrome_driver = r'F:\chrome\chromedriver_win32\chromedriver.exe'  #chromedriver的文件位置
     # chrome_driver = webdriver.Chrome(r'J:\nvida\firedata\chromedriver.exe')
 
     browser = webdriver.Chrome(chrome_options=options,executable_path = chrome_driver)
@@ -127,8 +129,23 @@ if __name__=="__main__":
     #      save_root=r'F:\Reflective_vests',\
     #      img_num=500)
 
-    main(names=['森林火灾', '山火'],\
-         save_root=r'J:\nvida\firedata\positive',\
-         img_num=[5, 7],\
-         continue_num=0,\
+    # names = ['丛林大火', '森林火灾', '森林烟雾', '山火', '林火'],
+    main(names=['丛林大火', '山火'],\
+         save_root=r'E:\navida\firedata\positive',\
+         img_num=[2, 1],\
+         continue_num=0, \
          is_open_chrome=False)
+         # is_open_chrome=False)
+    # bing国际版
+    # 西班牙语：Incendios forestales 俄语： Лесные пожары 
+    # 阿拉伯语： حرائق الغابات 波兰语：pożar lasu
+    # 保加利亚语：горски пожар 波斯语：آتش جنگل
+    # 德语：Waldbrand 法语：Feux de forêt
+    # 韩语：삼림 화재 荷兰语：bosbrand
+    # 马来语：api hutan 挪威语：Skogbrann
+    # 葡萄牙语：Incêndio Florestal 日语：森林火災
+    # 瑞典语：Brand i skogen 英语：forest fire
+    # 泰语：ไฟป่า 意大利语：Incendio della foresta
+    # 印度语：जंगल की आग
+
+    # google：点击图片查看相似，选择see more
