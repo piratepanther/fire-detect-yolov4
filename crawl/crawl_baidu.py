@@ -87,7 +87,9 @@ def main(names, save_root, img_num=[1000,], continue_num=0, is_open_chrome=False
         prefs = {"profile.managed_default_content_settings.images": 2}
         options.add_experimental_option("prefs", prefs)
 
-    browser = webdriver.Chrome(chrome_options=options)
+    chrome_driver = 'J:\ nvida\ firedata\chromedriver.exe'  #chromedriver的文件位置
+
+    browser = webdriver.Chrome(chrome_options=options,executable_path = chrome_driver)
     browser.maximize_window()
     browser.get(r'https://image.baidu.com/')
     time.sleep(random.random())
@@ -121,7 +123,7 @@ if __name__=="__main__":
     #      save_root=r'F:\Reflective_vests',\
     #      img_num=500)
 
-    main(names=['森林积雪', '道路积雪', '建筑积雪', '山上积雪', '草原下雪', '小区积雪', '雪人堆', '蓝天白云下的建筑道路积雪'],\
-         save_root=r'F:\DataSets\snow\positive',\
-         img_num=[300, 300, 300, 100, 100, 100, 50, 50],\
-         continue_num=7)
+    main(names=['森林火灾', '山火'],\
+         save_root=r'J:\nvida\firedata\positive',\
+         img_num=[5, 7],\
+         continue_num=0)
