@@ -15,26 +15,29 @@ import time
 import random
 import urllib
 import urllib.request as ur
+import socket
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys  # 键盘类
+from crawl import base64_image_download_to_local
 
-def send_param_to_bing(name, browser):
+def send_param_to_google(name, browser):
     '''
     :param name:    str
     :param browser: webdriver.Chrome 实际应该是全局变量的
     :return:        将要输入的 关键字 输入google图片
     '''
     # 采用id进行xpath选择，id一般唯一
-    inputs = browser.find_element_by_xpath('//input[@id="sb_form_q"]')
+    inputs = browser.find_element_by_xpath('//*[@id="sbtc"]/div/div[2]/input')
     inputs.clear()
     inputs.send_keys(name)
     time.sleep(1)
     inputs.send_keys(Keys.ENTER)
-    time.sleep(1)
+    time.sleep(2)
+    print(name+' send_param_to_google successful!')
 
     return
 
-def download_bing_images(save_path, img_num, browser):
+def download_google_images(save_path, img_num, img_num_num, browser):
     ''' 此函数应在
     :param save_path: 下载路径 str
     :param img_num:   下载图片数量 int
@@ -44,24 +47,92 @@ def download_bing_images(save_path, img_num, browser):
     if not os.path.exists(save_path):
         os.makedirs(save_path)
 
-    img_link = browser.find_elements_by_xpath('//*[@id="mmComponent_images_1"]/ul[1]/li[1]/div/div/a/div/img')
+    img_link = browser.find_elements_by_xpath('//*[@id="islrg"]/div[1]/div[1]/a[1]/div[1]/img')
 
     img_link[0].click()
+
+    while True:
+        try:
+            browser.execute_script("location.reload()")
+            time.sleep(1)
+            print('download_google_images刷新成功！')
+            break
+        except Exception as e:
+            print(str(e))
+            print('download_google_images刷新失败，继续尝试！')
+            continue
+    # browser.execute_script("location.reload()")
+    # time.sleep(1)
+    # print(browser.execute_script("location.reload()"))
+    # print(type(browser.execute_script("location.reload()")))
+
+    see_more_page_download(browser, img_num_num, save_path)
+
+    for i in range(img_num-1):
+
+        next_link_ = browser.find_element_by_xpath('//*[@id="Sva75c"]/div/div/div[3]/div[2]/c-wiz/div/div[1]/div[1]/div/div[1]/a[2]/div')
+        next_link_.click()
+        time.sleep(1)
+        print(str(i+1)+'th google see_more_link')
+        see_more_page_download(browser, img_num_num, save_path)
+
+    # img_link2 = browser.find_elements_by_xpath('//*[@id="headerButtons"]/div[2]')
+    # //*[@id="Sva75c"]/div/div/div[3]/div[2]/c-wiz/div/div[1]/div[1]/div/div[1]/a[2]/div
+    # img_link2[0].click()
+
+    return
+
+
+def see_more_page_download(browser, img_num_num, save_path):
+    see_more = browser.find_element_by_xpath(
+        '//*[@id="Sva75c"]/div/div/div[3]/div[2]/c-wiz/div/div[1]/div[3]/div[4]/c-wiz/div/div/div[1]/div[2]/a')
+    see_more_link = see_more.get_attribute("href")
+    print('------------')
+    print(see_more_link)
+    # executor.executeScript("window.open('" + href + "')")
+    browser.execute_script("window.open('" + see_more_link + "')")
+    # see_more.click()
+    # 切换窗口
+    time.sleep(1)
+    windows = browser.window_handles
+    browser.switch_to.window(windows[1])  # 切换到图像界面
+    time.sleep(random.random())
     # browser.refresh()
-    browser.execute_script("location.reload()")
+    # browser.execute_script("location.reload()")
+    img_link_ = browser.find_element_by_xpath('//*[@id="islrg"]/div[1]/div[1]/a[1]/div[1]/img')
+    img_link_.click()
+
+    while True:
+        try:
+            browser.execute_script("location.reload()")
+            time.sleep(1)
+            print('see_more_page_download刷新成功！')
+            break
+        except Exception as e:
+            print(str(e))
+            print('see_more_page_download刷新失败，继续尝试！')
+            continue
+
 
     # 切换窗口
     # windows = browser.window_handles
     # browser.switch_to.window(windows[0])  # 切换到图像界面
-
-
-
     time.sleep(random.random())
-
-    for i in range(img_num):
+    # 设置默认timeout时间，防止卡死
+    socket.setdefaulttimeout(5)
+    for i in range(img_num_num):
         print(i)
-        img_link_ = browser.find_element_by_xpath('//*[@id="mainImageWindow"]/div[1]/div/div/div/img')
-        print(img_link_)
+        # 模拟浏览器headers，防止403forbidden
+        # headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36"}
+        opener = ur.build_opener()
+        opener.addheaders = [('User-Agent','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36')]
+        ur.install_opener(opener)
+
+
+        img_link_final = browser.find_element_by_xpath(
+            '//*[@id="Sva75c"]/div/div/div[3]/div[2]/c-wiz/div/div[1]/div[1]/div/div[2]/a/img')
+        # print(img_link_)
+
         # //div[@class="imgContainer"]/img[1]
         # // *[ @ id = "currentImg"]
         # //*[@id="mainImageWindow"]/div[1]/div/div/div/img
@@ -73,28 +144,45 @@ def download_bing_images(save_path, img_num, browser):
         # //*[@id="mainImageWindow"]/div[1]/div/div/div/img
         # / html / body / div[1] / div[2] / div / div[1] / div / img
         # // *[ @ id = "mainImageWindow"] / div[1] / div / div / div / img
-        src_link = img_link_.get_attribute('src')
+        src_link = img_link_final.get_attribute('src')
         print(src_link)
         # 保存图片，使用urlib
         img_name = uuid.uuid4()
-        ur.urlretrieve(src_link, os.path.join(save_path, str(img_name) + '.jpg'))
-        # 关闭图像界面，并切换到外观界面
-        time.sleep(random.random())
 
+        # data:image/jpeg;base64,/9j/4AAQSkZJRgABA
+
+        str_base64 = 'base64'
+        src_link_split = src_link.split(",")
+
+        try:
+            # req = ur.Request(src_link, headers=headers)
+            # data = ur.urlopen(req).read()
+            # path=os.path.join(save_path, str(img_name) + '.jpg'
+            # with open(path, 'wb') as f:
+            #     f.write(data)
+            #     f.close()
+
+            if str_base64 in src_link_split[0]:
+                src_link = src_link_split[-1]
+                base64_image_download_to_local.base64_image_download_to_local(src_link,save_path,img_name)
+                time.sleep(random.random())
+            else:
+                ur.urlretrieve(src_link, os.path.join(save_path, str(img_name) + '.jpg'))
+                time.sleep(random.random())
+
+        except Exception as e:
+            print(str(e))
+        # "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36"
         # browser.refresh()
 
         # 点击下一张图片
-        browser.find_element_by_xpath('//*[@id="navr"]').click()
+        browser.find_element_by_xpath(
+            '//*[@id="Sva75c"]/div/div/div[3]/div[2]/c-wiz/div/div[1]/div[1]/div/div[1]/a[2]/div').click()
         time.sleep(random.random())
-
     # 关闭当前窗口，并选择之前的窗口
-    # browser.close()
-    # browser.switch_to.window(windows[0])
-    img_link2 = browser.find_elements_by_xpath('//*[@id="headerButtons"]/div[2]')
+    browser.close()
+    browser.switch_to.window(windows[0])
 
-    img_link2[0].click()
-
-    return
 
 def main(names, save_root, img_num=[1000,], continue_num=0, is_open_chrome=False):
     '''
@@ -118,8 +206,8 @@ def main(names, save_root, img_num=[1000,], continue_num=0, is_open_chrome=False
 
     browser = webdriver.Chrome(chrome_options=options,executable_path = chrome_driver)
     browser.maximize_window()
-    browser.get(r'https://cn.bing.com/images/trending?form=Z9LH')
-    time.sleep(random.random())
+    browser.get(r'https://www.google.com.hk/imghp?hl=en&ogbl')
+    time.sleep(1)
 
     assert type(names) == list, "names参数必须是字符串列表"
     assert continue_num <= len(names), "中断续爬点需要小于爬虫任务数量"
@@ -136,9 +224,12 @@ def main(names, save_root, img_num=[1000,], continue_num=0, is_open_chrome=False
     for i in range(continue_num, len(names)):
         name = names[i]
         save_path = os.path.join(save_root, str(names[i]))  # 以索引作为文件夹名称
-        send_param_to_bing(name, browser)
+        send_param_to_google(name, browser)
 
-        download_bing_images(save_path=save_path, img_num=img_num[i], browser=browser)
+        download_google_images(save_path=save_path, img_num=img_num[i][0], img_num_num=img_num[i][1],browser=browser)
+
+        browser.get(r'https://www.google.com.hk/imghp?hl=en&ogbl')
+        time.sleep(1)
     # 全部关闭
     browser.quit()
     return
@@ -151,10 +242,10 @@ if __name__=="__main__":
     #      save_root=r'F:\Reflective_vests',\
     #      img_num=500)
 
-    main(names=['森林火灾', '山火'],\
-         save_root=r'E:\navida\firedata\positive',\
-         img_num=[5, 5],\
+    main(names=['森林火灾','山火'],\
+         save_root=r'E:\navida\firedata\positive\google',\
+         img_num=[[100,50], [100,50]],\
          continue_num=0,\
          is_open_chrome=False)
-
+    # img_num[i][0]为第一次搜索到的图片，img_num[i][1]为Google联想seemore图片张数
     # kw：山火监测

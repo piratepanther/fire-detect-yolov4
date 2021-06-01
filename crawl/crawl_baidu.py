@@ -130,8 +130,8 @@ if __name__=="__main__":
     #      img_num=500)
 
     # names = ['丛林大火', '森林火灾', '森林烟雾', '山火', '林火'],
-    main(names=['丛林大火', '山火'],\
-         save_root=r'E:\navida\firedata\positive',\
+    main(names=['丛林大火', '山火','森林烟雾', '山火', '林火'],\
+         save_root=r'E:\navida\firedata\positive\baidu',\
          img_num=[2, 1],\
          continue_num=0, \
          is_open_chrome=False)

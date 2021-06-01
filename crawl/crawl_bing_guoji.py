@@ -152,7 +152,7 @@ if __name__=="__main__":
     #      img_num=500)
 
     main(names=['森林火灾', '山火'],\
-         save_root=r'E:\navida\firedata\positive',\
+         save_root=r'E:\navida\firedata\positive\bing',\
          img_num=[5, 5],\
          continue_num=0,\
          is_open_chrome=False)
