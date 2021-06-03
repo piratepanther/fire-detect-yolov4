@@ -1,22 +1,22 @@
-import os
-import uuid
-import time
-import random
-import urllib
-import urllib.request as ur
-import requests
-import socket
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys  # 键盘类
-from crawl import base64_image_download_to_local
-
+# import os
+# import uuid
+# import time
+# import random
+# import urllib
+# import urllib.request as ur
+# import requests
+# import socket
 # from selenium import webdriver
-#
-# # 创建 WebDriver 对象，指明使用chrome浏览器驱动
-# wd = webdriver.Chrome(r'J:\nvida\firedata\chromedriver.exe')
-#
-# # 调用WebDriver 对象的get方法 可以让浏览器打开指定网址
-# wd.get('https://www.baidu.com')
+# from selenium.webdriver.common.keys import Keys  # 键盘类
+# from crawl import base64_image_download_to_local
+
+from selenium import webdriver
+
+# 创建 WebDriver 对象，指明使用chrome浏览器驱动
+wd = webdriver.Chrome(r'F:\chrome\chromedriver_win32\chromedriver.exe')
+
+# 调用WebDriver 对象的get方法 可以让浏览器打开指定网址
+wd.get('https://www.baidu.com')
 
 # import base64
 # # from io import BytesIO
@@ -46,31 +46,31 @@ from crawl import base64_image_download_to_local
 # else:
 #     print('n')
 # socket.setdefaulttimeout(5)
-opener = ur.build_opener()
-opener.addheaders = [('User-Agent','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36')]
-ur.install_opener(opener)
-src_link='https://hk.on.cc/hk/bkn/cnt/amenews/20200826/photo/bkn-20200826001017630-0826_00972_001_01p.jpg'
-save_path=r'E:\navida\firedata\positive\google\test'
-if not os.path.exists(save_path):
-    os.makedirs(save_path)
-img_name = uuid.uuid4()
-
-# try:
-#     ur.urlretrieve(src_link, os.path.join(save_path, str(img_name) + '.jpg'))
-# except Exception as e:
-#     print(str(e))
-
-while True:
-        try:
-            # ur.urlretrieve(src_link, os.path.join(save_path, str(img_name) + '.jpg'))
-            img = requests.get(src_link).content
-            path = os.path.join(save_path, str(img_name) + '.jpg')
-            file = open(path, "wb")
-            file.write(img)
-            file.close()
-
-            break
-        except:
-            print("Connection refused by the server..")
-            continue
+# opener = ur.build_opener()
+# opener.addheaders = [('User-Agent','Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36')]
+# ur.install_opener(opener)
+# src_link='https://hk.on.cc/hk/bkn/cnt/amenews/20200826/photo/bkn-20200826001017630-0826_00972_001_01p.jpg'
+# save_path=r'E:\navida\firedata\positive\google\test'
+# if not os.path.exists(save_path):
+#     os.makedirs(save_path)
+# img_name = uuid.uuid4()
+#
+# # try:
+# #     ur.urlretrieve(src_link, os.path.join(save_path, str(img_name) + '.jpg'))
+# # except Exception as e:
+# #     print(str(e))
+#
+# while True:
+#         try:
+#             # ur.urlretrieve(src_link, os.path.join(save_path, str(img_name) + '.jpg'))
+#             img = requests.get(src_link).content
+#             path = os.path.join(save_path, str(img_name) + '.jpg')
+#             file = open(path, "wb")
+#             file.write(img)
+#             file.close()
+#
+#             break
+#         except:
+#             print("Connection refused by the server..")
+#             continue
 

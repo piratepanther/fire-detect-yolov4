@@ -1,0 +1,5 @@
+selenium==3.141.0
+requests==2.22.0
+crawl==0.5.5
+icrawler==0.6.4
+Pillow==8.2.0
